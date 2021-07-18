@@ -1,8 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pouyasalehi.date_app">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
+        android:usesCleartextTraffic="true"
         android:label="date_app"
         android:icon="@mipmap/ic_launcher">
+       <!-- This android:usesCleartextTraffic="true" Is For HTTP. Delete it when you got https-->
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

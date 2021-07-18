@@ -27,6 +27,19 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
+
+
+
+
+	<key>NSAppTransportSecurity</key>
+    <dict>
+            <key>NSAllowsArbitraryLoads</key>
+            <true/>
+    </dict> <!-- This part Is For HTTP. Delete it when you got https-->
+
+
+
+
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
