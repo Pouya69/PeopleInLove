@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:date_app/helpers/sharedPrefs.dart';
 import 'package:http/http.dart' as http;
 
-final String messageUrl = "ws://192.168.0.47:8000/messages/";
+final String messageUrl = "ws://192.168.0.47:8000/messages";
 final String groupFetchUrl = "ws://192.168.0.47:8000/groups";
 final String siteUrl = "http://192.168.0.47:8000";
 

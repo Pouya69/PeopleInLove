@@ -1,12 +1,13 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:date_app/api/api_user_info.dart';
+import 'package:date_app/helpers/sqlite_helper_groups.dart' as dbHelper;
 import 'package:date_app/objectsAndWidgets/objects.dart';
 import 'package:date_app/objectsAndWidgets/widgets.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
-
 import 'chat_and_utils/chat_page.dart';
 
 
@@ -20,12 +21,12 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   WebSocketChannel? channel;
-  List<ItemObject> _groups = [];
+  List<GroupItemObject> _groups = [];
   List<int> _groupIds = [];
   Future<String>? _futureFeeling;
 
-  _goToChatScreen(int groupId, BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(key: null, groupId: groupId,)),);
+  _goToChatScreen(GroupItemObject group, BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(key: null, group: group, token: widget.token,)),);
   }
 
   _checkForNewMessages() async {
@@ -37,6 +38,11 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
+    // Load chats from db
+    dbHelper.getGroups().then((List<GroupItemObject> value) {
+      _groups = value;
+    });
+
     // TODO: implement initState
     channel = IOWebSocketChannel.connect(
         groupFetchUrl,
@@ -53,8 +59,9 @@ class _MainPageState extends State<MainPage> {
 
       for(Map<String, dynamic> groupJson in jsonEvent["groups"]) {
         List<String> _keys = groupJson.keys.toList();
-        ItemObject group = ItemObject.fromJSON(groupJson[_keys[0]], groupJson[_keys[0]]["unread_messages"]);
+        GroupItemObject group = GroupItemObject.fromJSON(groupJson[_keys[0]], groupJson[_keys[0]]["unread_messages"]);
         if(!_groupIds.contains(group.groupId)) {
+          dbHelper.insertGroup(group);
           setState(() {
             _groups.add(group);
             _groupIds.add(group.groupId);
@@ -62,6 +69,7 @@ class _MainPageState extends State<MainPage> {
         } else {
           int i = _groupIds.indexOf(group.groupId);
           if(_groups[i].lastMessageId != group.lastMessageId) {
+            dbHelper.updateGroup(group);
             setState(() {
               _groupIds.removeAt(i);
               _groups.removeAt(i);
@@ -73,7 +81,6 @@ class _MainPageState extends State<MainPage> {
       }
     });
     _checkForNewMessages();
-
     super.initState();
   }
 
@@ -90,6 +97,11 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+
+        },
+      ),
       appBar: AppBar(
         title: Text("Dating App"),
       ),
@@ -101,7 +113,10 @@ class _MainPageState extends State<MainPage> {
                 itemCount: _groupIds.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    leading: Image.network(_groups[index].pictureUrl),  // Check here
+                    leading: CachedNetworkImage(
+                      imageUrl: _groups[index].pictureUrl,
+                      placeholder: (context, url) => Image(image: AssetImage('assets/default.jpg'), width: 15, height: 15,),
+                    ),  // Check here
                     title: Text(_groups[index].groupName),
                     subtitle: Text("From ${_groups[index].creator}"),
                     trailing: FutureBuilder(
@@ -115,7 +130,7 @@ class _MainPageState extends State<MainPage> {
                         return Text("---");
                       },
                     ),
-                    onTap: () => _goToChatScreen(_groups[index].groupId, context),
+                    onTap: () => _goToChatScreen(_groups[index], context),
                   );
                 },
               ),

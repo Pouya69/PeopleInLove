@@ -35,27 +35,41 @@ class LoginObject {
 }
 
 
-class ItemObject {
+class GroupItemObject {
   final int groupId;
   final String groupName;
   String pictureUrl;
   String creator;
-  String timeStamp;
   int unreadMessages;
   int lastMessageId;
 
-  ItemObject({required this.groupName, required this.pictureUrl, required this.groupId, required this.creator, required this.lastMessageId, required this.timeStamp, required this.unreadMessages});
+  GroupItemObject({required this.groupName, required this.pictureUrl, required this.groupId, required this.creator, required this.lastMessageId, required this.unreadMessages});
 
-  factory ItemObject.fromJSON(Map<String, dynamic> map, int unreadMessages) {
-    return ItemObject(
+  factory GroupItemObject.fromJSON(Map<String, dynamic> map, int unreadMessages) {
+    return GroupItemObject(
         groupId: map['group_id'],
         groupName: map['group_name'],
         creator: map['creator'],
         lastMessageId: map['id'],
         pictureUrl: map['pic_url'],
-        timeStamp: "${map['created_at']}",
-
         unreadMessages: unreadMessages
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'group_id': groupId,
+      'group_name': groupName,
+      'picture_url': pictureUrl,
+      'unread_messages': unreadMessages,
+      'last_message_id': lastMessageId,
+      'last_message_creator': creator,
+    };
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return 'GroupItemObject{group_id: $groupId, group_name: $groupName, picture_url: $pictureUrl, unread_messages: $unreadMessages, last_message_id: $lastMessageId, last_message_creator: $creator}';
   }
 }
