@@ -22,7 +22,6 @@ _getToken() {
 }
 
 
-
 Future<String> getFeelingStringRequest(String username) async {
   _getToken();
   final response = await http.get(
@@ -35,6 +34,23 @@ Future<String> getFeelingStringRequest(String username) async {
   Map<String, dynamic> jsonResponse = jsonDecode(response.body);
   if (response.statusCode == 200) {
     return jsonResponse['feeling'];
+  }
+  throw Exception("$jsonResponse");
+}
+
+
+Future<List<String>> getInterestsRequest(String username) async {
+  _getToken();
+  final response = await http.get(
+    username == "" ? Uri.parse(siteUrl + "/api/interests") : Uri.parse(siteUrl + "/api/interests/" + username),
+    headers: <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    "HTTP_AUTHORIZATION": _tokenType == "google" ? "Bearer $_token" : "token $_token"
+    },
+  );
+  Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+  if (response.statusCode == 200) {
+    return jsonResponse['interests'];
   }
   throw Exception("$jsonResponse");
 }

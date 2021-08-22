@@ -20,9 +20,14 @@ class _ChangeProfilePageState extends State<ChangeProfilePage> {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          CachedNetworkImage(
-            imageUrl: _profilePicUrl,
-            placeholder: (context, url) => Image(image: AssetImage('assets/default.jpg'), width: 50, height: 50,),
+          IconButton(
+              icon: CachedNetworkImage(
+                imageUrl: _profilePicUrl,
+                placeholder: (context, url) => Image(image: AssetImage('assets/default.jpg'), width: 50, height: 50,),
+              ),
+              onPressed: () {
+
+              },
           ),
           Row(
             children: <Widget>[

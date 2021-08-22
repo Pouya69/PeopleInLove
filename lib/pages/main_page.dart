@@ -29,13 +29,6 @@ class _MainPageState extends State<MainPage> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(key: null, group: group, token: widget.token,)),);
   }
 
-  _checkForNewMessages() async {
-    var mapData = {
-      "command": "fetch_group_live",
-    };
-    channel!.sink.add(mapData);
-  }
-
   @override
   void initState() {
     // Load chats from db
@@ -80,7 +73,10 @@ class _MainPageState extends State<MainPage> {
         }
       }
     });
-    _checkForNewMessages();
+    var mapData = {
+      "command": "fetch_group_live",
+    };
+    channel!.sink.add(mapData);
     super.initState();
   }
 
@@ -101,6 +97,11 @@ class _MainPageState extends State<MainPage> {
         onPressed: () {
 
         },
+        child: Icon(
+          Icons.chat,
+          color: Colors.white,
+        ),
+        backgroundColor: Colors.red,
       ),
       appBar: AppBar(
         title: Text("Dating App"),
@@ -118,7 +119,7 @@ class _MainPageState extends State<MainPage> {
                       placeholder: (context, url) => Image(image: AssetImage('assets/default.jpg'), width: 15, height: 15,),
                     ),  // Check here
                     title: Text(_groups[index].groupName),
-                    subtitle: Text("From ${_groups[index].creator}"),
+                    subtitle: Text("From ${_groups[index].lastMessageCreator}"),
                     trailing: FutureBuilder(
                       future: _futureFeeling,
                       builder: (context, snapshot) {
@@ -131,6 +132,9 @@ class _MainPageState extends State<MainPage> {
                       },
                     ),
                     onTap: () => _goToChatScreen(_groups[index], context),
+                    onLongPress: () {
+
+                    },
                   );
                 },
               ),

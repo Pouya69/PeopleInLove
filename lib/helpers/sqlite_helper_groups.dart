@@ -45,7 +45,7 @@ Future<List<GroupItemObject>> getGroups() async {
     return GroupItemObject(
         groupId: maps[i]['group_id'],
         groupName: maps[i]['group_name'],
-        creator: maps[i]['creator'],
+        lastMessageCreator: maps[i]['creator'],
         lastMessageId: maps[i]['id'],
         pictureUrl: maps[i]['pic_url'],
         unreadMessages: maps[i]['unreadMessages']

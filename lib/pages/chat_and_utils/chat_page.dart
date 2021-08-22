@@ -2,13 +2,12 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:date_app/api/api_user_info.dart';
 import 'package:date_app/objectsAndWidgets/objects.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:date_app/helpers/sqlite_helper_groups.dart';
-
-
+import 'package:date_app/helpers/sqlite_helper_messages.dart' as msgDbHelper;
 
 
 class ChatPage extends StatefulWidget {
@@ -23,13 +22,16 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   List<MessageObject> _messages = [];
   WebSocketChannel? channel;
+  Future<Database>? database;
 
   @override
   void initState() {
     // TODO: implement initState
-    msgDbHelper.getMessagesFromDb().then((List<MessageObject> value) {
+    database = msgDbHelper.initializeDb();
+    msgDbHelper.getMessagesByGroupID(widget.group.groupId, database!).then((List<MessageObject> value) {
       _messages = value;
     });
+
     channel = IOWebSocketChannel.connect(
         "$messageUrl/${widget.group.groupId}",
         headers: {
@@ -65,7 +67,17 @@ class _ChatPageState extends State<ChatPage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            CachedNetworkImage(imageUrl: widget.group.pictureUrl),
+            IconButton(
+                icon: CachedNetworkImage(
+                    imageUrl: widget.group.pictureUrl,
+                    placeholder: (context, url) => Image(
+                      image: AssetImage('assets/group_default.jpg'),
+                    )
+                ),
+                onPressed: () {
+
+                },
+            ),
             Text(widget.group.groupName),
           ],
         ),
@@ -84,7 +96,9 @@ class _ChatPageState extends State<ChatPage> {
             itemCount: _messages.length,
             itemBuilder: (context, index) {
               return ListTile(
-                onLongPress: ,
+                onLongPress: () {
+
+                },
               );
             },
             reverse: true,

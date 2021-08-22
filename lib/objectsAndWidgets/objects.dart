@@ -39,17 +39,17 @@ class GroupItemObject {
   final int groupId;
   final String groupName;
   String pictureUrl;
-  String creator;
+  String lastMessageCreator;
   int unreadMessages;
   int lastMessageId;
 
-  GroupItemObject({required this.groupName, required this.pictureUrl, required this.groupId, required this.creator, required this.lastMessageId, required this.unreadMessages});
+  GroupItemObject({required this.groupName, required this.pictureUrl, required this.groupId, required this.lastMessageCreator, required this.lastMessageId, required this.unreadMessages});
 
   factory GroupItemObject.fromJSON(Map<String, dynamic> map, int unreadMessages) {
     return GroupItemObject(
         groupId: map['group_id'],
         groupName: map['group_name'],
-        creator: map['creator'],
+        lastMessageCreator: map['creator'],
         lastMessageId: map['id'],
         pictureUrl: map['pic_url'],
         unreadMessages: unreadMessages
@@ -63,13 +63,57 @@ class GroupItemObject {
       'picture_url': pictureUrl,
       'unread_messages': unreadMessages,
       'last_message_id': lastMessageId,
-      'last_message_creator': creator,
+      'last_message_creator': lastMessageCreator,
     };
   }
 
   @override
   String toString() {
-    // TODO: implement toString
-    return 'GroupItemObject{group_id: $groupId, group_name: $groupName, picture_url: $pictureUrl, unread_messages: $unreadMessages, last_message_id: $lastMessageId, last_message_creator: $creator}';
+    return 'GroupItemObject{group_id: $groupId, group_name: $groupName, picture_url: $pictureUrl, unread_messages: $unreadMessages, last_message_id: $lastMessageId, last_message_creator: $lastMessageCreator}';
+  }
+}
+
+
+class MessageObject {
+  final int messageId;
+  final int groupId;
+  String creator;
+  String replyingTo;
+  String fileUrl;
+  String content;
+  DateTime timeStamp;
+  bool isRead;
+
+  MessageObject({required this.messageId, required this.groupId, required this.creator, required this.replyingTo, required this.fileUrl, required this.content, required this.timeStamp, required this.isRead});
+
+  factory MessageObject.fromJSON(Map<String, dynamic> map) {
+    return MessageObject(
+        messageId: map["id"],
+        groupId: map["group_id"],
+        creator: map["creator"],
+        replyingTo: map["replying_to"],
+        fileUrl: map["file_url"],
+        content: map["content"],
+        timeStamp: map["created_at"],
+        isRead: map["is_read"]
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'message_id': messageId,
+      'group_id': groupId,
+      'creator': creator,
+      'replying_to': replyingTo,
+      'file_url': fileUrl,
+      'content': content,
+      'created_at': timeStamp,
+      'is_read': isRead
+    };
+  }
+
+  @override
+  String toString() {
+    return 'MessageObject{message_id: $messageId, group_id: $groupId, creator: $creator, replying_to: $replyingTo, file_url: $fileUrl, content: $content, created_at: $timeStamp, is_read: $isRead}';
   }
 }
